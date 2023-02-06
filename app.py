@@ -13,8 +13,8 @@ df = pd.DataFrame(data={
 
 
 def measure():
-    current_date = time.gmtime()
-    current_time = time.strftime("%H:%M:%S", time.gmtime())
+    current_date = time.localtime()
+    current_time = time.strftime("%H:%M:%S", time.localtime())
     stats = {
         "process": os.getpid(),
         "cpu_per": int(psutil.cpu_percent()),
@@ -35,10 +35,18 @@ def write_data(stats):
     return df
 
 
+def write_to_file(dataframe):
+    c_date = time.localtime()
+    file_name = f"machine-id_{c_date.tm_year}_{c_date.tm_mon}_{c_date.tm_mday}_{c_date.tm_hour}_{c_date.tm_min}.csv"
+
+    dataframe.to_csv(file_name)
+
+
 if __name__ == "__main__":
     i = 0
     while i < 20:
         write_data(measure())
         # time.sleep(random.randint(1, 3))
         i += 1
+    write_to_file(df)
     print(df)

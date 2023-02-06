@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import random
 import time
+import boto3
 
 df = pd.DataFrame(data={
         "process": [],
@@ -13,6 +14,8 @@ df = pd.DataFrame(data={
 
 writing_time = 2  # min to write a file
 start_time = time.time()
+mybucket = 'machine-data-sample-data'
+s3 = boto3.resource('s3')
 
 
 def measure():
@@ -43,6 +46,8 @@ def write_to_file(dataframe):
     file_name = f"machine-id_{c_date.tm_year}_{c_date.tm_mon}_{c_date.tm_mday}_{c_date.tm_hour}_{c_date.tm_min}.csv"
 
     dataframe.to_csv(file_name)
+
+    s3.meta.client.upload_file(file_name, mybucket, f'{c_date.tm_year}/{c_date.tm_mon}/{c_date.tm_mday}/{file_name}')
 
 
 def main():

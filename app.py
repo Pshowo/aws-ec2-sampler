@@ -11,6 +11,9 @@ df = pd.DataFrame(data={
         "ram_total_GB": [],
     })
 
+writing_time = 2  # min to write a file
+start_time = time.time()
+
 
 def measure():
     current_date = time.localtime()
@@ -42,11 +45,21 @@ def write_to_file(dataframe):
     dataframe.to_csv(file_name)
 
 
-if __name__ == "__main__":
-    i = 0
-    while i < 20:
+def main():
+    global df, start_time
+    while True:
         write_data(measure())
-        # time.sleep(random.randint(1, 3))
-        i += 1
-    write_to_file(df)
-    print(df)
+        time.sleep(random.randint(1, 3))
+        if (time.time() - start_time) > 2*60:
+            write_to_file(df)
+            df = pd.DataFrame(data={
+                "process": [],
+                "cpu_per": [],
+                "ram_per": [],
+                "ram_total_GB": [],
+            })
+            start_time = time.time()
+
+
+if __name__ == "__main__":
+    main()
